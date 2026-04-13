@@ -1,3 +1,71 @@
-Python is a programming language. Python is used for machine learning and data science.
-Coffee is very tasty. Tea and coffee are popular drinks.
-Now i am programming on python and ML.
+Python and the web
+By the mid 1990s, Python was starting to be used in new ways, from scripts for audio recording and playback to its first foray into web development, which would go on to become a mainstay for Python.
+
+“One of the big things was web development, which was also a super interesting thing for me,” says van Rossum, who says Python began to be used for backend scripting on web servers alongside Perl and Shell scripts. “You could create dynamic web pages and that became one of my favorite Python applications.”
+
+Gartner’s Ryan says what sealed Python’s popularity among developers during the 1990s was how it became a favorite choice for quickly creating powerful scripts. “Being a scripting language with very strong functionality lowered the barriers to entry for many users,” he says.
+
+More than that, however, Ryan says the language was sufficiently versatile and so easy to pick up that it appealed to many different types of users with a range of technical expertise. “Sysadmins and others took the language for systems automation and programming, developers for features such as functional programming and having classes with inheritance available — Perl for example was far less featured in this regard,” he says. “Once people were familiar with the language, and it has a pretty low curve for getting started, they became extremely productive very quickly.”
+
+By 1994, Python had caught the eye of Michael McLay, who held a senior role at the US National Bureau of Standards (NBS), now the US National Institute for Standards and Technology (NIST). Foreshadowing how Python would come to be favored by researchers and scientists for its ease of use, McLay was interested in how Python could be used by scientists at the NBS who van Rossum says “had a considerable amount of data to process but weren’t very good coders”.
+
+To help sell Python to others within the bureau, McLay invited van Rossum, who was still working at CWI in the Netherlands at the time, to spend two months working at NIST as a guest researcher. That placement would prove to be the catalyst for both Python’s future evolution and a major change in van Rossum’s life.
+
+It was during this placement that the very first Python workshop would be held at the NBS’s offices, where van Rossum, Barry Warsaw, and other early Python enthusiasts came together to discuss what they were doing with Python and hopes for the language’s future development.
+
+While at the NBS’s offices, van Rossum met Bob Kahn, renowned for his role in helping develop one of the foundational technologies of the internet: The TCP/IP protocol.
+
+That meeting resulted in a job offer to come work with Kahn at the Corporation for National Research Initiatives (CNRI), a nonprofit research group based in Virginia focused on the strategic development of network technologies.
+
+Just as Python had answered the need for a new type of programming language, van Rossum says the job offer came at exactly the time when he was starting to question his future at CWI.
+
+“CWI being more an academic institution, they were putting gentle pressure on me to either get a PhD or face the prospect of having to find employment elsewhere,” he says.
+
+SEE: Learning Python: Best free books, tutorials and videos (TechRepublic)
+
+“The prospect of having to switch to a PhD track at my age, I was 35 or so, didn’t really appeal to me. Earlier, also, as a result of Python, some other prospects had come my way where, after a bunch of phone calls and thinking, I had decided not to go for it. But here, I liked the people, I liked what they were offering me, the project, and I went for it.”
+
+It was at CNRI that van Rossum put together many of the structures for managing the Python language, with the help of a team of fellow Python enthusiasts. After joining CNRI in April 1995, van Rossum led a small team of developers working on building Knowbot Programs, software known as mobile agents designed to be run across distributed computer systems like the internet.
+
+The team worked in Python, and van Rossum was joined by Jeremy Hylton, Roger Masse, Barry Warsaw, Ken Manheimer, and Fred Drake, all of whom would go on to play an important role in the Python community.
+
+“We ended up with a group of between four and 10 people, most of whom worked at CNRI, who were the core of Python development,” says van Rossum.
+
+While van Rossum was at CNRI, this team helped him create the python.org website, the CVS server for managing changes to the core codebase, and the mailing lists for Python Special Interest Groups, which work to improve and maintain the Python language.
+
+Download this article as a PDF (free registration required).
+
+The community of Python users had grown significantly since its public release in 1991, and by the second half of the decade the language was attracting a sizeable global user base. During that period, the management of the language began to be formalized, with the establishment of the precursor to the Python Software Foundation (PSF), which would be set up in 2001. As the community grew, the biannual Python workshops that started in 1994 morphed into larger annual events, and eventually PSF’s annual PyCon, which is still going strong today.
+
+By the turn of the 21st century, the language was larger than any one person, with a sizeable community playing an active role in its development, a long way from the summer of 1994, when early Python users fretted about what would happen to the language ‘if Guido was hit by a bus‘.
+
+Van Rossum continued to play a core role, however, and the idea of him being at the heart of the language never went away, as evidenced by him being nicknamed “Benevolent dictator for life” (BDFL) of the language, a tongue-in-cheek title that stuck for years.
+
+“For the most part, for a very long time, I was able to absorb the pressure quite well, and I also generally developed project management skills that allowed me to delegate lots of things and let people be in control of their own destiny,” says van Rossum.
+
+Gartner’s Ryan says it’s not particularly unusual for a language’s creator to act as that language’s steward, citing Larry Wall with Perl and Ryan Dahl with the JavaScript runtime Node.js, but says van Rossum is recognized for being even-handed in his management of Python.
+
+“He is widely acknowledged as being very balanced about the direction of the project and in his overall stewardship,” he says.
+
+Indeed, it’s the open nature of Python’s development, via public debate between a community of core developers, that van Rossum attributes to being a deciding factor in Python’s success.
+
+
+The evolution of Python
+In the intervening years, there have been major leaps forward in Python, the introduction of Python 3.0 in 2008 modernized the language, and more recently there have been significant changes to how the language is managed.
+
+Those changes were triggered last year, when van Rossum stepped down from his leadership role as BDFL, following public disagreement over the introduction of Assignment Expressions to the language, mooted in the Python Enhancement Proposal PEP572.
+
+While their introduction was designed to make it possible to write more efficient code, van Rossum faced heavy criticism online from those opposed to the change, with some arguing their use would make code less readable and harder to maintain.
+
+Van Rossum says he was used to debate over new features, but it was the intransigence of some of his detractors and also the personal nature of certain attacks that made up his mind to step down.
+
+“I was very disappointed in how the people who disagreed technically went to social media and started ranting that the decision process was broken, or that I was making a grave mistake. I felt attacked behind my back,” he says.
+
+
+“In the past, it had always been clear that if there were a decision to be made about a change in the language or an improved feature, a whole bunch of core developers would discuss the pros and cons of the thing. Either a clear consensus would appear or, if it was not so clear, I would mull it over in my head and decide one way or another. With PEP572, even though it was clearly controversial, I chose ‘Yes, I want to do this’, and people didn’t agree to disagree.
+
+“It wasn’t exactly a revolt, but I felt that I didn’t have the trust of enough of the core developer community to keep going.”
+
+He thinks the change in how disputes about the language play out is partly a result of how many people use Python today.
+
+“It’s probably also the fact that the Python community is so much larger. It’s harder to reach any form of consensus, of course, because there’s always fringe dissidents, no matter which way you decide.”
