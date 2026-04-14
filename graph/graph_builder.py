@@ -18,3 +18,13 @@ def build_graph(words):
                     G.add_edge(w1, w2, weight=weight)
 
     return G
+
+def filter_graph(G, min_weight=2):
+    edges_to_remove = [
+        (u, v)
+        for u, v, d in G.edges(data=True)
+        if d["weight"] < min_weight
+    ]
+
+    G.remove_edges_from(edges_to_remove)
+    return G

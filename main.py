@@ -1,7 +1,7 @@
 from analysis.cluster_analysis import get_top_words
 from clustering.community_detection import detect_communities
 from config import TOP_N_WORDS
-from graph.graph_builder import build_graph
+from graph.graph_builder import build_graph, filter_graph
 from preprocessing.text_processor import preprocess_text
 from visualization.visualizer import draw_graph
 import matplotlib.pyplot as plt
@@ -11,11 +11,20 @@ def main():
     with open("data/sample.txt", "r", encoding="utf-8") as f:
         text = f.read()
 
+    from collections import Counter
+
+    def filter_rare_words(words, min_freq=2):
+        freq = Counter(words)
+        return [w for w in words if freq[w] >= min_freq]
+
     # 1. Предобработка
     words = preprocess_text(text, debug_pos=True)
+    words = filter_rare_words(words, min_freq=2)
 
     # 2. Граф
     G = build_graph(words)
+    G = filter_graph(G, min_weight=2)
+
 
     # 3. Louvain
     print("\n--- Louvain ---")
