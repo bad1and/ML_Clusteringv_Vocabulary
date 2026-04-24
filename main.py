@@ -5,7 +5,7 @@ from graph.graph_builder import build_graph, filter_graph
 from preprocessing.text_processor import preprocess_text
 from visualization.visualizer import draw_graph
 import matplotlib.pyplot as plt
-
+from graph.semantic_graph_builder import build_semantic_graph
 
 def main():
     with open("data/sample.txt", "r", encoding="utf-8") as f:
@@ -22,7 +22,7 @@ def main():
     words = filter_rare_words(words, min_freq=2)
 
     # 2. Граф
-    G = build_graph(words)
+    G = build_semantic_graph(words, top_k=5)
     G = filter_graph(G, min_weight=2)
 
 
