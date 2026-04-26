@@ -35,6 +35,15 @@ def print_graph_stats(G):
         print("Avg weight:", round(sum(weights) / len(weights), 3))
 
 
+def filter_weak_edges(G, threshold=0.4):
+    edges_to_remove = [
+        (u, v)
+        for u, v, d in G.edges(data=True)
+        if d.get("weight", 0) < threshold
+    ]
+    G.remove_edges_from(edges_to_remove)
+    return G
+
 def run_clustering(G, method):
     print(f"\n--- {method} ---")
     clusters, partition = detect_communities(G, method=method)
@@ -70,6 +79,8 @@ def main():
             min_freq=MIN_WORD_FREQ,
             max_words=MAX_UNIQUE_WORDS,
         )
+
+        G = filter_weak_edges(G, threshold=0.50)
 
     else:
         raise ValueError("GRAPH_MODE must be 'baseline' or 'semantic'")
