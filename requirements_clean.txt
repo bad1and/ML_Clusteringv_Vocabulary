@@ -1,0 +1,6 @@
+spacy>=3.8,<3.9
+networkx>=3.2
+matplotlib>=3.8
+python-louvain>=0.16
+sentence-transformers>=3.0
+scikit-learn>=1.4

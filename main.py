@@ -1,56 +1,93 @@
+import matplotlib.pyplot as plt
+import networkx as nx
+
 from analysis.cluster_analysis import get_top_words
 from clustering.community_detection import detect_communities
-from config import TOP_N_WORDS
+from config import (
+    COOCCURRENCE_MIN_WEIGHT,
+    GRAPH_MODE,
+    MAX_UNIQUE_WORDS,
+    MIN_WORD_FREQ,
+    SEMANTIC_MIN_SIM,
+    SEMANTIC_TOP_K,
+    TOP_N_WORDS,
+)
 from graph.graph_builder import build_graph, filter_graph
+from graph.semantic_graph_builder import build_semantic_graph
 from preprocessing.text_processor import preprocess_text
 from visualization.visualizer import draw_graph
-import matplotlib.pyplot as plt
-from graph.semantic_graph_builder import build_semantic_graph
+
+
+def print_graph_stats(G):
+    print("\n--- Graph stats ---")
+    print("Nodes:", G.number_of_nodes())
+    print("Edges:", G.number_of_edges())
+
+    if G.number_of_nodes() > 0:
+        print("Connected components:", nx.number_connected_components(G))
+        largest = max(nx.connected_components(G), key=len)
+        print("Largest component size:", len(largest))
+
+    if G.number_of_edges() > 0:
+        weights = [data["weight"] for _, _, data in G.edges(data=True)]
+        print("Min weight:", round(min(weights), 3))
+        print("Max weight:", round(max(weights), 3))
+        print("Avg weight:", round(sum(weights) / len(weights), 3))
+
+
+def run_clustering(G, method):
+    print(f"\n--- {method} ---")
+    clusters, partition = detect_communities(G, method=method)
+    top_words = get_top_words(G, clusters, TOP_N_WORDS)
+
+    for cid, words in top_words.items():
+        print(f"Cluster {cid}: {words}")
+
+    print(f"Total clusters: {len(clusters)}")
+    draw_graph(G, partition, title=method)
+
 
 def main():
     with open("data/sample.txt", "r", encoding="utf-8") as f:
         text = f.read()
 
-    from collections import Counter
+    words = preprocess_text(text, debug_pos=False)
+    print("Words after preprocessing:", len(words))
 
-    def filter_rare_words(words, min_freq=2):
-        freq = Counter(words)
-        return [w for w in words if freq[w] >= min_freq]
+    if GRAPH_MODE == "baseline":
+        # Тупая модель для презентации: связывает слова, которые стоят рядом.
+        G = build_graph(words)
+        G = filter_graph(G, min_weight=COOCCURRENCE_MIN_WEIGHT)
 
-    # 1. Предобработка
-    words = preprocess_text(text, debug_pos=True)
-    words = filter_rare_words(words, min_freq=2)
+    elif GRAPH_MODE == "semantic":
+        # Умная модель: связывает слова по смысловой близости embedding'ов.
+        # Старый filter_graph(min_weight=2) здесь НЕ используем, потому что
+        # cosine similarity обычно меньше 1.
+        G = build_semantic_graph(
+            words,
+            top_k=SEMANTIC_TOP_K,
+            min_similarity=SEMANTIC_MIN_SIM,
+            min_freq=MIN_WORD_FREQ,
+            max_words=MAX_UNIQUE_WORDS,
+        )
 
-    # 2. Граф
-    G = build_semantic_graph(words, top_k=5)
-    G = filter_graph(G, min_weight=2)
+    else:
+        raise ValueError("GRAPH_MODE must be 'baseline' or 'semantic'")
 
+    print_graph_stats(G)
 
-    # 3. Louvain
-    print("\n--- Louvain ---")
-    clusters_l, partition_l = detect_communities(G, method="louvain")
+    if G.number_of_edges() == 0:
+        print("\nGraph has no edges. Try lowering SEMANTIC_MIN_SIM or increasing SEMANTIC_TOP_K.")
+        return
 
-    top_l = get_top_words(G, clusters_l, TOP_N_WORDS)
+    run_clustering(G, method="louvain")
 
-    for cid, words in top_l.items():
-        print(f"Cluster {cid}: {words}")
-
-    print(f"Total clusters: {len(clusters_l)}")
-
-    draw_graph(G, partition_l, title="Louvain")
-
-    # 4. Girvan-Newman
-    print("\n--- Girvan-Newman ---")
-    clusters_g, partition_g = detect_communities(G, method="girvan_newman")
-
-    top_g = get_top_words(G, clusters_g, TOP_N_WORDS)
-
-    for cid, words in top_g.items():
-        print(f"Cluster {cid}: {words}")
-
-    print(f"Total clusters: {len(clusters_g)}")
-
-    draw_graph(G, partition_g, title="Girvan-Newman")
+    # Girvan-Newman сильно медленнее и хуже масштабируется. Для защиты можно
+    # оставить как сравнение, но если тормозит — закомментировать.
+    if G.number_of_nodes() <= 120:
+        run_clustering(G, method="girvan_newman")
+    else:
+        print("\nGirvan-Newman skipped: graph is too large.")
 
 
 if __name__ == "__main__":
