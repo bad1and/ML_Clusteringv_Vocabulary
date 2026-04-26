@@ -19,6 +19,10 @@ def _select_vocabulary(words, min_freq=2, max_words=200):
     ]
     return selected[:max_words]
 
+def get_word_embeddings(words, min_freq=2, max_words=80):
+    selected_words = _select_vocabulary(words, min_freq, max_words)
+    embeddings = model.encode(selected_words)
+    return selected_words, embeddings
 
 def build_semantic_graph(words, top_k=4, min_similarity=0.20, min_freq=2, max_words=200):
     """

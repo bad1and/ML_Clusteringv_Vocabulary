@@ -16,7 +16,8 @@ from graph.graph_builder import build_graph, filter_graph
 from graph.semantic_graph_builder import build_semantic_graph
 from preprocessing.text_processor import preprocess_text
 from visualization.visualizer import draw_graph
-
+from visualization.embedding_visualizer import visualize_embeddings
+from graph.semantic_graph_builder import get_word_embeddings
 
 def print_graph_stats(G):
     print("\n--- Graph stats ---")
@@ -62,6 +63,14 @@ def main():
 
     words = preprocess_text(text, debug_pos=False)
     print("Words after preprocessing:", len(words))
+    # ВИЗУАЛИЗАЦИЯ ЭМБЕДДИНГОВ (до графа)
+    selected_words, embeddings = get_word_embeddings(
+        words,
+        min_freq=MIN_WORD_FREQ,
+        max_words=MAX_UNIQUE_WORDS,
+    )
+
+    visualize_embeddings(selected_words, embeddings)
 
     if GRAPH_MODE == "baseline":
         # Тупая модель для презентации: связывает слова, которые стоят рядом.
