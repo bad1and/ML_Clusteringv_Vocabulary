@@ -1,8 +1,10 @@
-import matplotlib.pyplot as plt
-import networkx as nx
+import matplotlib.pyplot as plt # библиотека для графиков
+import networkx as nx # библиотека для графов
 
-from analysis.cluster_analysis import get_top_words
-from clustering.community_detection import detect_communities
+from analysis.cluster_analysis import get_top_words # для кластеров
+from clustering.community_detection import detect_communities # для алгоритмов поиска сообществ
+
+# импорт настроек из config
 from config import (
     COOCCURRENCE_MIN_WEIGHT,
     GRAPH_MODE,
@@ -12,12 +14,12 @@ from config import (
     SEMANTIC_TOP_K,
     TOP_N_WORDS,
 )
-from graph.graph_builder import build_graph, filter_graph
-from graph.semantic_graph_builder import build_semantic_graph
-from preprocessing.text_processor import preprocess_text
-from visualization.visualizer import draw_graph
-from visualization.embedding_visualizer import visualize_embeddings
-from graph.semantic_graph_builder import get_word_embeddings
+
+from graph.graph_builder import build_graph, filter_graph # для тупой модели
+from graph.semantic_graph_builder import build_semantic_graph, get_word_embeddings # для умной модели
+from preprocessing.text_processor import preprocess_text # для предобработки текста
+from visualization.visualizer import draw_graph # для виртуализации графа
+from visualization.embedding_visualizer import visualize_embeddings # для виртуализации слов
 
 def print_graph_stats(G):
     print("\n--- Graph stats ---")
