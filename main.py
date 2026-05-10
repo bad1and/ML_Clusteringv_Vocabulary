@@ -11,7 +11,7 @@ from config import (
     MAX_UNIQUE_WORDS,
     MIN_WORD_FREQ,
     SEMANTIC_MIN_SIM,
-    SEMANTIC_TOP_K,
+    SEMANTIC_NEIGHBORS,
     TOP_N_WORDS,
 )
 
@@ -85,7 +85,7 @@ def main():
         # cosine similarity обычно меньше 1.
         G = build_semantic_graph(
             words,
-            top_k=SEMANTIC_TOP_K,
+            top_k=SEMANTIC_NEIGHBORS,
             min_similarity=SEMANTIC_MIN_SIM,
             min_freq=MIN_WORD_FREQ,
             max_words=MAX_UNIQUE_WORDS,
@@ -99,7 +99,7 @@ def main():
     print_graph_stats(G)
 
     if G.number_of_edges() == 0:
-        print("\nGraph has no edges. Try lowering SEMANTIC_MIN_SIM or increasing SEMANTIC_TOP_K.")
+        print("\nGraph has no edges. Try lowering SEMANTIC_MIN_SIM or increasing SEMANTIC_NEIGHBORS.")
         return
 
     run_clustering(G, method="louvain")

@@ -26,6 +26,7 @@ def get_word_embeddings(words, min_freq=2, max_words=80):
     embeddings = model.encode(selected_words) # получает смысловой вектор слов
     return selected_words, embeddings
 
+# построение графа
 def build_semantic_graph(words, top_k=4, min_similarity=0.20, min_freq=2, max_words=200):
 
     selected_words = _select_vocabulary(words, min_freq=min_freq, max_words=max_words) # получаем итоговый массив слов
