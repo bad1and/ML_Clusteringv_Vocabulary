@@ -1,4 +1,4 @@
-import networkx as nx
+import networkx as nx # библиотека для графов
 from config import COOCCURRENCE_NEIGHBORS # импорт размера окна
 
 # построение графа

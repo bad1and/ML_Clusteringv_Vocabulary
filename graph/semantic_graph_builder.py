@@ -1,6 +1,6 @@
 from collections import Counter # словарь для подсчета частот слов
 
-import networkx as nx
+import networkx as nx # библиотека для графов
 from sentence_transformers import SentenceTransformer # библиотека для sentence-BERT
 from sklearn.metrics.pairwise import cosine_similarity # для подсчета косинусного сходства
 
