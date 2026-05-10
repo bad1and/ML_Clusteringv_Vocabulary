@@ -1,7 +1,7 @@
 # Общие настройки проекта
 WINDOW_SIZE = 6
-ALLOWED_POS = {"NOUN", "ADJ", "PROPN"}
-TOP_N_WORDS = 8
+ALLOWED_POS = {"NOUN", "ADJ", "PROPN"} # допустимые части речи
+TOP_N_WORDS = 8 #
 
 # Режим графа: "baseline" = слова рядом, "semantic" = смысловая близость
 GRAPH_MODE = "semantic"
@@ -10,7 +10,7 @@ GRAPH_MODE = "semantic"
 COOCCURRENCE_MIN_WEIGHT = 2
 
 # Semantic graph
-MIN_WORD_FREQ = 2
-MAX_UNIQUE_WORDS = 50
-SEMANTIC_TOP_K = 2
-SEMANTIC_MIN_SIM = 0.50
+MIN_WORD_FREQ = 2 # минимальное частота встречаемости слова
+MAX_UNIQUE_WORDS = 50 # максимальный размер итогового массива слов
+SEMANTIC_TOP_K = 2 # максимальное кол-во соседей слова
+SEMANTIC_MIN_SIM = 0.50 # минимальное косинусное сходство слов

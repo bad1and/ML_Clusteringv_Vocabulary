@@ -1,62 +1,63 @@
-from collections import Counter
+from collections import Counter # словарь для подсчета частот слов
 
 import networkx as nx
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer # библиотека для sentence-BERT
+from sklearn.metrics.pairwise import cosine_similarity # для подсчета косинусного сходства
 
 # English model. Для русского текста лучше заменить на:
 # "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-
+# формируем итоговый массив слов
 def _select_vocabulary(words, min_freq=2, max_words=200):
-    """Берём не случайный set(words), а самые частотные слова в стабильном порядке."""
-    freq = Counter(words)
+    freq = Counter(words) # подсчет кол-ва слов
+
+    # итоговый массив (отсекаем короткие и редкие слова)
     selected = [
         word
         for word, count in freq.most_common()
         if count >= min_freq and len(word) > 2
     ]
-    return selected[:max_words]
+    return selected[:max_words] # отсекаем первые N самых часто-встречаемых слов
 
+# для
 def get_word_embeddings(words, min_freq=2, max_words=80):
-    selected_words = _select_vocabulary(words, min_freq, max_words)
-    embeddings = model.encode(selected_words)
+    selected_words = _select_vocabulary(words, min_freq, max_words) # получаем итоговый массив слов
+    embeddings = model.encode(selected_words) # получает смысловой вектор слов
     return selected_words, embeddings
 
 def build_semantic_graph(words, top_k=4, min_similarity=0.20, min_freq=2, max_words=200):
-    """
-    Строит семантический граф: вершины = слова, ребра = top_k ближайших
-    соседей по cosine similarity между Sentence-BERT embedding'ами.
 
-    Важно: веса cosine similarity находятся примерно в диапазоне [-1; 1],
-    чаще всего 0..1. Поэтому старый filter_graph(min_weight=2) здесь
-    применять нельзя.
-    """
-    unique_words = _select_vocabulary(words, min_freq=min_freq, max_words=max_words)
+    selected_words = _select_vocabulary(words, min_freq=min_freq, max_words=max_words) # получаем итоговый массив слов
 
+    # формирование вершин графа
     G = nx.Graph()
-    for word in unique_words:
+    for word in selected_words:
         G.add_node(word)
 
-    if len(unique_words) < 2:
+    # если кол-во слов влишком мало
+    if len(selected_words) < 2:
         return G
 
-    embeddings = model.encode(unique_words)
-    sim_matrix = cosine_similarity(embeddings)
+    embeddings = model.encode(selected_words) # получает смысловой вектор слов
+    sim_matrix = cosine_similarity(embeddings) # получает матрицу с косинусным сходством слов
 
-    for i, word in enumerate(unique_words):
+    # формирование ребер графа
+    for i, word in enumerate(selected_words):
+
+        # формирование соседей слов
         neighbors = sorted(
-            enumerate(sim_matrix[i]),
+            enumerate(sim_matrix[i]), # сортировка по убыванию схожести
             key=lambda item: item[1],
             reverse=True,
         )
 
+        # берем самых близких соседей
         for j, sim in neighbors[1 : top_k + 1]:
             if sim >= min_similarity:
-                G.add_edge(word, unique_words[j], weight=float(sim))
+                G.add_edge(word, selected_words[j], weight=float(sim))
 
-    # Изолированные вершины чаще всего только портят картинку и Louvain.
+    # удаление изолированных вершин
     isolates = list(nx.isolates(G))
     G.remove_nodes_from(isolates)
 
