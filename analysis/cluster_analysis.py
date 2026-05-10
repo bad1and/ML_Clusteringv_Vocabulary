@@ -11,6 +11,6 @@ def get_top_words(G, clusters, top_n=5):
             key=lambda w: G.degree(w, weight="weight"),
             reverse=True
         )
-        result[cid] = scored[:top_n] # выбираем первые N важных слов
+        result[cid] = scored[:top_n] # выбираем первые N важнейших слов
 
     return result
