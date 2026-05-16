@@ -1,10 +1,15 @@
+import matplotlib
+
+matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from analysis.cluster_analysis import get_top_words
+from analysis.cluster_analysis import get_top_words, summarize_clusters
 from clustering.community_detection import detect_communities
 from config import (
     COOCCURRENCE_MIN_WEIGHT,
+    DATA_FILE,
     GRAPH_MODE,
     MAX_UNIQUE_WORDS,
     MIN_WORD_FREQ,
@@ -13,11 +18,11 @@ from config import (
     TOP_N_WORDS,
 )
 from graph.graph_builder import build_graph, filter_graph
-from graph.semantic_graph_builder import build_semantic_graph
+from graph.semantic_graph_builder import build_semantic_graph, get_word_embeddings
 from preprocessing.text_processor import preprocess_text
-from visualization.visualizer import draw_graph
 from visualization.embedding_visualizer import visualize_embeddings
-from graph.semantic_graph_builder import get_word_embeddings
+from visualization.visualizer import draw_graph
+
 
 def print_graph_stats(G):
     print("\n--- Graph stats ---")
@@ -45,52 +50,65 @@ def filter_weak_edges(G, threshold=0.4):
     G.remove_edges_from(edges_to_remove)
     return G
 
-def run_clustering(G, method):
+
+def run_clustering(G, method, language):
     print(f"\n--- {method} ---")
     clusters, partition = detect_communities(G, method=method)
     top_words = get_top_words(G, clusters, TOP_N_WORDS)
+    summary = summarize_clusters(G, clusters)
 
     for cid, words in top_words.items():
         print(f"Cluster {cid}: {words}")
 
-    print(f"Total clusters: {len(clusters)}")
-    draw_graph(G, partition, title=method)
+    print(f"Total clusters: {summary['cluster_count']}")
+    print(f"Largest cluster: {summary['largest_cluster']}")
+    print(f"Average cluster size: {summary['avg_cluster_size']}")
+    print(f"Modularity: {summary['modularity']}")
+
+    draw_graph(
+        G,
+        partition,
+        title=f"{method} ({language})",
+        output_name=f"{language}_{method}_graph.png",
+    )
 
 
 def main():
-    with open("data/sample.txt", "r", encoding="utf-8") as f:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
         text = f.read()
 
-    words = preprocess_text(text, debug_pos=False)
+    words, language, has_pos_tagger = preprocess_text(text, debug_pos=False)
+    print("Detected language:", language)
+    print("POS tagger available:", has_pos_tagger)
     print("Words after preprocessing:", len(words))
-    # ВИЗУАЛИЗАЦИЯ ЭМБЕДДИНГОВ (до графа)
+    print("Graph mode:", GRAPH_MODE)
+
     selected_words, embeddings = get_word_embeddings(
         words,
+        language=language,
         min_freq=MIN_WORD_FREQ,
         max_words=MAX_UNIQUE_WORDS,
     )
-
-    visualize_embeddings(selected_words, embeddings)
+    visualize_embeddings(
+        selected_words,
+        embeddings,
+        title=f"Embedding projection ({language})",
+        output_name=f"{language}_embeddings.png",
+    )
 
     if GRAPH_MODE == "baseline":
-        # Тупая модель для презентации: связывает слова, которые стоят рядом.
         G = build_graph(words)
         G = filter_graph(G, min_weight=COOCCURRENCE_MIN_WEIGHT)
-
     elif GRAPH_MODE == "semantic":
-        # Умная модель: связывает слова по смысловой близости embedding'ов.
-        # Старый filter_graph(min_weight=2) здесь НЕ используем, потому что
-        # cosine similarity обычно меньше 1.
         G = build_semantic_graph(
             words,
+            language=language,
             top_k=SEMANTIC_TOP_K,
             min_similarity=SEMANTIC_MIN_SIM,
             min_freq=MIN_WORD_FREQ,
             max_words=MAX_UNIQUE_WORDS,
         )
-
-        G = filter_weak_edges(G, threshold=0.50)
-
+        G = filter_weak_edges(G, threshold=SEMANTIC_MIN_SIM)
     else:
         raise ValueError("GRAPH_MODE must be 'baseline' or 'semantic'")
 
@@ -100,16 +118,14 @@ def main():
         print("\nGraph has no edges. Try lowering SEMANTIC_MIN_SIM or increasing SEMANTIC_TOP_K.")
         return
 
-    run_clustering(G, method="louvain")
+    run_clustering(G, method="louvain", language=language)
 
-    # Girvan-Newman сильно медленнее и хуже масштабируется. Для защиты можно
-    # оставить как сравнение, но если тормозит — закомментировать.
     if G.number_of_nodes() <= 120:
-        run_clustering(G, method="girvan_newman")
+        run_clustering(G, method="girvan_newman", language=language)
     else:
         print("\nGirvan-Newman skipped: graph is too large.")
 
 
 if __name__ == "__main__":
     main()
-    plt.show()
+    plt.close("all")
