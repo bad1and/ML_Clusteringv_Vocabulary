@@ -16,6 +16,8 @@ from config import (
     SEMANTIC_MIN_SIM,
     SEMANTIC_TOP_K,
     TOP_N_WORDS,
+    AUTO_THRESHOLD_PERCENTILE,
+    MIN_TOKEN_LENGTH,
 )
 from graph.graph_builder import build_graph, filter_graph
 from graph.semantic_graph_builder import build_semantic_graph, get_word_embeddings
@@ -104,15 +106,15 @@ def main():
             words,
             language=language,
             top_k=SEMANTIC_TOP_K,
-            min_similarity=SEMANTIC_MIN_SIM,
+            min_similarity=SEMANTIC_MIN_SIM,  # None = авто-подбор
+            auto_threshold_percentile=AUTO_THRESHOLD_PERCENTILE,
             min_freq=MIN_WORD_FREQ,
             max_words=MAX_UNIQUE_WORDS,
+            min_length=MIN_TOKEN_LENGTH,
+            verbose=True,
         )
-        G = filter_weak_edges(G, threshold=SEMANTIC_MIN_SIM)
     else:
         raise ValueError("GRAPH_MODE must be 'baseline' or 'semantic'")
-
-    print_graph_stats(G)
 
     if G.number_of_edges() == 0:
         print("\nGraph has no edges. Try lowering SEMANTIC_MIN_SIM or increasing SEMANTIC_TOP_K.")
